@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { FixpayService } from './fixpay.service';
 
 @Controller('')
@@ -6,7 +6,7 @@ export class FixpayController {
   constructor(private readonly fixpayService: FixpayService) {}
 
   @Get('pix')
-  async generateGet() {
-    return this.fixpayService.geraPix();
+  async generateGet(@Body() body) {
+    return this.fixpayService.geraPix(body);
   }
 }

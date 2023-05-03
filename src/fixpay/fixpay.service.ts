@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { catchError, lastValueFrom } from 'rxjs';
 import { Body, HttpException, Injectable } from '@nestjs/common';
-import { response } from 'express';
 
 @Injectable()
 export class FixpayService {

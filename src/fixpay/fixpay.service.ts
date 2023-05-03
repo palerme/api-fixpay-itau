@@ -1,55 +1,67 @@
 import { HttpService } from '@nestjs/axios';
-import { catchError, last, lastValueFrom } from 'rxjs';
+import { catchError, lastValueFrom } from 'rxjs';
 import { Body, HttpException, Injectable } from '@nestjs/common';
-import { Data } from './modelo/fixpay';
+import { response } from 'express';
 
 @Injectable()
 export class FixpayService {
-  constructor(private readonly httpService: HttpService) { }
+  constructor(private readonly httpService: HttpService) {}
 
-  async geraPix(body: {}) {
+  async geraPix(@Body() body: object) {
     console.log(body);
     const pix = await lastValueFrom(
-      this.httpService.post<Data>('https://pix.fixpay.com.br:3467/v1/generate_pix_per_day', body,
-        {
+      this.httpService
+        .post('https://pix.fixpay.com.br:3467/v1/generate_pix_per_day', body, {
           headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${process.env.TOKEN}`
-          }
-        }).pipe(
+            'Content-type': 'application/json',
+            Authorization: `Bearer ${process.env.TOKEN}`,
+          },
+        })
+        .pipe(
           catchError((e) => {
             console.log('erro', e.response?.data);
             throw new HttpException(
               e.response?.data?.error?.message,
               e.response?.status || 500,
             );
-          })
-        ));
+          }),
+        ),
+    );
 
-    if (pix) {
-      for (const txId of pix.data) {
-        if (!txId.txid) {
-          return 'Nenhuma chave gerada'
-        } 
-        console.log(txId.txid);
-        await this.qrCode(txId.txid)
-    }
-  };
-}
-  async qrCode(pix) {
-      console.log(pix)
-      if (!this.qrCode(pix)) {
-        return this.geraPix
-      }
-      const qrCode = await lastValueFrom(
-        this.httpService.get(`https://pix.fixpay.com.br:3467/v1/consult_pix_qrcode/${pix.txid}`,
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ${process.env.TOKEN}`
-            }
-          })
-      )
-      console.log(qrCode)
-    }
+    const txid = pix.data.data.txid;
+    console.log(txid);
+    return this.qrCode(txid);
   }
+  async qrCode(txid) {
+    const qrCode = await lastValueFrom(
+      this.httpService.get(
+        `https://pix.fixpay.com.br:3467/v1/consult_pix_qrcode/${txid}`,
+        {
+          headers: {
+            'Content-type': 'application/json',
+            Authorization: `Bearer ${process.env.TOKEN}`,
+          },
+        },
+      ),
+    ).then((response) => response.data);
+    console.log('QrCode', qrCode.data.imagem_base64);
+    if (!qrCode) return JSON.stringify(qrCode.data.imagem_base64);
+    return this.consultaPix(txid);
+  }
+
+  async consultaPix(txid) {
+    const pixConsulta = await lastValueFrom(
+      this.httpService.get(
+        `https://pix.fixpay.com.br:3467/v1/consult_pix/${txid}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.TOKEN}`,
+          },
+        },
+      ),
+    ).then((response) => response.data);
+    console.log('Consulta PIX', pixConsulta.data);
+    return pixConsulta.data;
+  }
+}

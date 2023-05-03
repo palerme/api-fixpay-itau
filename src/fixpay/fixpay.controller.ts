@@ -6,7 +6,7 @@ export class FixpayController {
   constructor(private readonly fixpayService: FixpayService) {}
 
   @Get('pix')
-  async generateGet(@Body() body: {}) {
+  async generateGet(@Body() body: object) {
     return this.fixpayService.geraPix(body);
   }
 }

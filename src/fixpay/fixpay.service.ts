@@ -26,12 +26,13 @@ export class FixpayService {
           }),
         ),
     );
-
+    console.log(pix.data.data.pixCopiaECola);
     const txid = pix.data.data.txid;
     console.log(txid);
     return this.qrCode(txid);
   }
-  async qrCode(txid) {
+
+  async qrCode(txid: string) {
     const qrCode = await lastValueFrom(
       this.httpService.get(
         `https://pix.fixpay.com.br:3467/v1/consult_pix_qrcode/${txid}`,
@@ -43,12 +44,13 @@ export class FixpayService {
         },
       ),
     ).then((response) => response.data);
-    console.log('QrCode', qrCode.data.imagem_base64);
-    if (!qrCode) return JSON.stringify(qrCode.data.imagem_base64);
-    return this.consultaPix(txid);
+    const imgBase64 = Buffer.from(qrCode.data.imagem_base64, 'base64');
+    const base64data = imgBase64.toString('base64');
+    if (!qrCode) return 'Sem chave';
+    return this.consultaPix(txid), base64data;
   }
 
-  async consultaPix(txid) {
+  async consultaPix(txid: string) {
     const pixConsulta = await lastValueFrom(
       this.httpService.get(
         `https://pix.fixpay.com.br:3467/v1/consult_pix/${txid}`,
@@ -60,6 +62,11 @@ export class FixpayService {
         },
       ),
     ).then((response) => response.data);
+    if (pixConsulta.data.status === 'CONCLUIDA') {
+      return 'PIX PAGO COM SUCESSO!';
+    } else if (pixConsulta.data.status === 'ATIVA') {
+      return this.consultaPix(txid);
+    }
     console.log('Consulta PIX', pixConsulta.data);
     return pixConsulta.data;
   }

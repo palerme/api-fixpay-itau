@@ -7,6 +7,6 @@ export class ItauBoletoController {
 
   @Get('boleto')
   async geraBoleto(@Body() body: string) {
-    return;
+    return this.itauBoletoService.geraBoleto();
   }
 }

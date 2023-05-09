@@ -1,4 +1,59 @@
-// @Entity()
-// export class ItauBoleto {
-
-// }
+export class ItauBoleto {
+    FID: number;
+    FInclusao: Date;
+    FEdicao: Date;
+    FStatus: number;
+    FAgenteCobradorID: number;
+    FCodigoDeBaixa: number;
+    FOcorrencia: number;
+    FOcorrenciaData: Date;
+    FBancoID: number;
+    FAgencia: number;
+    FOperacao: number;
+    FConta: number;
+    FCedente: number;
+    FCarteira: number;
+    FClienteID: string;
+    FClienteNome: string;
+    FClienteeMail: string;
+    FClienteEndereco: string;
+    FClienteNumero: number;
+    FClienteComplemento: string;
+    FClienteBairro: string;
+    FClienteCidade: string;
+    FClienteUF: string;
+    FClienteCEP: number;
+    FClienteCPF: number;
+    FClienteCNPJ: number;
+    FNossoNumero: number;
+    FEmissao: Date;
+    FVencimento: Date;
+    FValor: number;
+    FAbatimento: number;
+    FDescontoMax: number;
+    FDesconto1Percentual: number;
+    FDesconto1Valor: number;
+    FDesconto1Dias: number;
+    FDesconto2Percentual: number;
+    FDesconto2Valor: number;
+    FDesconto2Dias: number;
+    FDesconto3Percentual: number;
+    FDesconto3Valor: number;
+    FDesconto3Dias: number;
+    FDescontoPorAntecipacao: number;
+    FJurosPercentual: number;
+    FJurosValor: number;
+    FMultaPercentual: number;
+    FMultaValor: number;
+    FMultaDias: number;
+    FISSBase: number;
+    FISSValor: number;
+    FISSPercentual: number;
+    FEnviado: Boolean;
+    FEnviadoMomento: Date;
+    FEnviadoConexaoID: number;
+    FRegistrado: Boolean;
+    FSituacao: number;
+    FROLSituacao: number;
+    FROLTentativas: number;
+}

@@ -11,7 +11,6 @@ export class AuthService {
       client_id: process.env.CLIENT_ID,
       client_secret: process.env.CLIENT_SECRET,
     };
-    console.log(body);
     const getToken = await firstValueFrom(
       this.httpService
         .post('https://devportal.itau.com.br/api/jwt', body, {
@@ -30,7 +29,6 @@ export class AuthService {
         ),
     );
     const accessToken = (await getToken).data.access_token;
-    console.log(getToken.data);
     return accessToken;
   }
 }

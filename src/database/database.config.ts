@@ -12,6 +12,11 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       password: process.env.MSSQL_PASSWORD,
       database: process.env.MSSQL_DATABASE,
       entities: [join(__dirname, '/../**/**.entity.{ts,js}')],
+      options: {
+        cryptoCredentialsDetails: {
+          minVersion: 'TLSv1'
+        }
+      },
       extra: {
         trustServerCertificate: true,
       },
